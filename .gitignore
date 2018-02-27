@@ -1,0 +1,11 @@
+__pycache__
+.idea
+env
+my-virtualenv/
+errorFiles/
+DATA/
+post_processedFiles/
+.DS_Store
+pre_processFiles/.DS_Store
+pre_processFiles/rawFiles/*/*.csv
+pre_processFiles/Data
