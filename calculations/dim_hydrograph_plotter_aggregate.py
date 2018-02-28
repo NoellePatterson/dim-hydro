@@ -2,6 +2,8 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib
+from datetime import datetime
+from utils.helpers import remove_offset_from_julian_date
 import matplotlib.pyplot as plt
 from utils.helpers import is_multiple_date_data
 from utils.matrix_convert import convert_raw_data_to_matrix
@@ -33,7 +35,7 @@ def dim_hydrograph_plotter_agg(start_date, directory_name, end_with, class_numbe
 
                     current_gauge_column_index = current_gauge_column_index + step
 
-        _plotter(aggregate_matrix/counter)
+        _plotter(aggregate_matrix/counter, start_date)
 
 def _getAggMatrix(flow_matrix):
 
@@ -57,27 +59,33 @@ def _getAggMatrix(flow_matrix):
 
     return percentiles
 
-def _plotter(aggregate_matrix):
+def _plotter(aggregate_matrix, start_date):
+    def format_func(value, tick_number):
+        julian_start_date = datetime.strptime("{}/2001".format(start_date), "%m/%d/%Y").timetuple().tm_yday
+        return int(remove_offset_from_julian_date(value, julian_start_date))
     """Dimensionless Hydrograph Plotter"""
-    x = np.arange(0,366,1)
 
-    plt.figure('aggregate_matrix')
-    plt.plot(aggregate_matrix[:,0], color = 'navy')
-    plt.plot(aggregate_matrix[:,1], color = 'blue')
-    plt.plot(aggregate_matrix[:,2], color = 'red')
-    plt.plot(aggregate_matrix[:,3], color = 'blue')
-    plt.plot(aggregate_matrix[:,4], color = 'navy')
-    plt.fill_between(x, aggregate_matrix[:,0], aggregate_matrix[:,1], color = 'powderblue')
-    plt.fill_between(x, aggregate_matrix[:,1], aggregate_matrix[:,2], color = 'powderblue')
-    plt.fill_between(x, aggregate_matrix[:,2], aggregate_matrix[:,3], color = 'powderblue')
-    plt.fill_between(x, aggregate_matrix[:,3], aggregate_matrix[:,4], color = 'powderblue')
+    fig = plt.figure('aggregate_matrix')
+    ax = plt.subplot(111)
+    ax.xaxis.set_major_formatter(plt.FuncFormatter(format_func))
+    x = np.arange(0,366,1)
+    plt.grid(which = 'major', linestyle = '-', axis = 'y')
+    perc10 = ax.plot(aggregate_matrix[:,0], color = 'navy', label = "10%")
+    perc25 = ax.plot(aggregate_matrix[:,1], color = 'blue', label = "25%")
+    perc50 = ax.plot(aggregate_matrix[:,2], color = 'red', label = "50%")
+    perc75 = ax.plot(aggregate_matrix[:,3], color = 'blue', label = "75%")
+    perc90 = ax.plot(aggregate_matrix[:,4], color = 'navy', label = "90%")
+    ax.fill_between(x, aggregate_matrix[:,0], aggregate_matrix[:,1], color = 'powderblue')
+    ax.fill_between(x, aggregate_matrix[:,1], aggregate_matrix[:,2], color = 'powderblue')
+    ax.fill_between(x, aggregate_matrix[:,2], aggregate_matrix[:,3], color = 'powderblue')
+    ax.fill_between(x, aggregate_matrix[:,3], aggregate_matrix[:,4], color = 'powderblue')
+    box = ax.get_position('aggregate_matrix')
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, ncol=5)
+    plt.tight_layout()
+
     plt.title("Dimensionless Hydrograph")
     plt.xlabel("Julian Date")
     plt.ylabel("Daily Flow/Average Annual Flow")
-    plt.grid(which = 'major', linestyle = '-', axis = 'y')
-    ax = plt.gca()
-    tick_spacing = [0, 50, 100, 150, 200, 250, 300, 350]
-    ax.set_xticks(tick_spacing)
-    #tick_labels = label_xaxis[tick_spacing]
-    #ax.set_xticklabels(tick_labels)
-    plt.savefig("post_processedFiles/Hydrographs/dimensionless_hydrograph.png")
+    plt.tight_layout(pad=1)
+
+    plt.savefig("post_processedFiles/Hydrographs/dim_hydro_aggregate.png")
