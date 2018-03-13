@@ -3,9 +3,10 @@ import numpy as np
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
-from utils.helpers import is_multiple_date_data
+from utils.helpers import is_multiple_date_data, find_index
 from utils.matrix_convert import convert_raw_data_to_matrix
 from utils.calc_all_year import calculate_average_each_column
+from pre_processFiles.gauge_reference import gauge_reference
 matplotlib.use('Agg')
 
 np.warnings.filterwarnings('ignore')
@@ -23,17 +24,24 @@ def dim_hydrograph_plotter_agg(start_date, directory_name, end_with, class_numbe
                     if gauge_numbers:
                         if int(fixed_df.iloc[1, current_gauge_column_index]) in gauge_numbers:
                             current_gauge_class, current_gauge_number, year_ranges, flow_matrix, julian_dates = convert_raw_data_to_matrix(fixed_df, current_gauge_column_index, start_date)
+                            start_year_index = find_index(year_ranges, int(gauge_reference[int(current_gauge_number)]['start']))
+                            end_year_index = find_index(year_ranges, int(gauge_reference[int(current_gauge_number)]['end']))
+                            flow_matrix = flow_matrix[:,start_year_index:end_year_index]
                             aggregate_matrix = np.add(aggregate_matrix, _getAggMatrix(flow_matrix))
                             counter = counter + 1
 
                     elif int(fixed_df.iloc[0, current_gauge_column_index]) == int(class_number):
                         current_gauge_class, current_gauge_number, year_ranges, flow_matrix, julian_dates = convert_raw_data_to_matrix(fixed_df, current_gauge_column_index, start_date)
+                        start_year_index = find_index(year_ranges, int(gauge_reference[int(current_gauge_number)]['start']))
+                        end_year_index = find_index(year_ranges, int(gauge_reference[int(current_gauge_number)]['end']))
+                        flow_matrix = flow_matrix[:,start_year_index:end_year_index]
                         aggregate_matrix = np.add(aggregate_matrix, _getAggMatrix(flow_matrix))
                         counter = counter + 1
 
                     current_gauge_column_index = current_gauge_column_index + step
-
-        _plotter(aggregate_matrix/counter)
+        final_aggregate = aggregate_matrix/counter
+        # np.savetxt("post_processedFiles/Hydrographs/Class_{}_aggregate.csv".format(int(class_number)), final_aggregate, delimiter=",", fmt="%s")
+        _plotter(final_aggregate)
 
 def _getAggMatrix(flow_matrix):
 
@@ -53,7 +61,6 @@ def _getAggMatrix(flow_matrix):
         percentiles[row_index,2] = np.nanpercentile(normalized_matrix[row_index,:], 50)
         percentiles[row_index,3] = np.nanpercentile(normalized_matrix[row_index,:], 75)
         percentiles[row_index,4] = np.nanpercentile(normalized_matrix[row_index,:], 90)
-
 
     return percentiles
 
@@ -80,4 +87,4 @@ def _plotter(aggregate_matrix):
     ax.set_xticks(tick_spacing)
     #tick_labels = label_xaxis[tick_spacing]
     #ax.set_xticklabels(tick_labels)
-    plt.savefig("post_processedFiles/Hydrographs/dimensionless_hydrograph.png")
+    plt.savefig("post_processedFiles/Hydrographs/dim_hydro_aggregate.png")
