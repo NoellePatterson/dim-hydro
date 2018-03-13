@@ -1,12 +1,14 @@
 import os
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 import matplotlib
-from utils.helpers import is_multiple_date_data
+from pre_processFiles.gauge_reference import gauge_reference
+from utils.helpers import is_multiple_date_data, find_index
 from utils.matrix_convert import convert_raw_data_to_matrix
 from utils.calc_all_year import calculate_average_each_column
 matplotlib.use('Agg')
-import matplotlib.pyplot as plt
+
 
 np.warnings.filterwarnings('ignore')
 
@@ -23,23 +25,32 @@ def dim_hydrograph_plotter_indiv(start_date, directory_name, end_with, class_num
                     if gauge_numbers:
                         if int(fixed_df.iloc[1, current_gauge_column_index]) in gauge_numbers:
                             current_gauge_class, current_gauge_number, year_ranges, flow_matrix, julian_dates = convert_raw_data_to_matrix(fixed_df, current_gauge_column_index, start_date)
+                            start_year_index = find_index(year_ranges, int(gauge_reference[int(current_gauge_number)]['start']))
+                            end_year_index = find_index(year_ranges, int(gauge_reference[int(current_gauge_number)]['end']))
+                            flow_matrix = flow_matrix[:,start_year_index:end_year_index]
 
-                            _plotter(flow_matrix, julian_dates, current_gauge_number, plot)
+                            _plotter(flow_matrix, julian_dates, current_gauge_number, plot, current_gauge_class)
 
                     elif not class_number and not gauge_numbers:
                         current_gauge_class, current_gauge_number, year_ranges, flow_matrix, julian_dates = convert_raw_data_to_matrix(fixed_df, current_gauge_column_index, start_date)
+                        start_year_index = find_index(year_ranges, int(gauge_reference[int(current_gauge_number)]['start']))
+                        end_year_index = find_index(year_ranges, int(gauge_reference[int(current_gauge_number)]['end']))
+                        flow_matrix = flow_matrix[:,start_year_index:end_year_index]
 
-                        _plotter(flow_matrix, julian_dates, current_gauge_number, plot)
+                        _plotter(flow_matrix, julian_dates, current_gauge_number, plot, current_gauge_class)
+
                     elif int(fixed_df.iloc[0, current_gauge_column_index]) == int(class_number):
                         current_gauge_class, current_gauge_number, year_ranges, flow_matrix, julian_dates = convert_raw_data_to_matrix(fixed_df, current_gauge_column_index, start_date)
+                        start_year_index = find_index(year_ranges, int(gauge_reference[int(current_gauge_number)]['start']))
+                        end_year_index = find_index(year_ranges, int(gauge_reference[int(current_gauge_number)]['end']))
+                        flow_matrix = flow_matrix[:,start_year_index:end_year_index]
 
-                        _plotter(flow_matrix, julian_dates, current_gauge_number, plot)
+                        _plotter(flow_matrix, julian_dates, current_gauge_number, plot, current_gauge_class)
 
                     current_gauge_column_index = current_gauge_column_index + step
 
 
-def _plotter(flow_matrix, julian_dates, current_gauge_number, plot):
-
+def _plotter(flow_matrix, julian_dates, current_gauge_number, plot, current_gauge_class):
 
     """Dimensionless Hydrograph Plotter"""
     average_annual_flow = calculate_average_each_column(flow_matrix)
@@ -58,6 +69,8 @@ def _plotter(flow_matrix, julian_dates, current_gauge_number, plot):
         percentiles[row_index,3] = np.nanpercentile(normalized_matrix[row_index,:], 75)
         percentiles[row_index,4] = np.nanpercentile(normalized_matrix[row_index,:], 90)
 
+    # percentiles = percentiles.transpose()
+    # np.savetxt("post_processedFiles/Class-{}/plot_data_{}.csv".format(int(current_gauge_class), int(current_gauge_number)), percentiles, delimiter=",", fmt="%s")
     x = np.arange(0,366,1)
     label_xaxis = np.array(julian_dates[0:366])
 
