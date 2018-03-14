@@ -44,7 +44,7 @@ def dim_hydrograph_plotter_agg(start_date, directory_name, end_with, class_numbe
 
         final_aggregate = aggregate_matrix/counter
         # np.savetxt("post_processedFiles/Hydrographs/Class_{}_aggregate.csv".format(int(class_number)), final_aggregate, delimiter=",", fmt="%s")
-        _plotter(final_aggregate)
+        _plotter(final_aggregate, start_date)
 
 def _getAggMatrix(flow_matrix):
 
@@ -96,10 +96,5 @@ def _plotter(aggregate_matrix, start_date):
     plt.ylabel("Daily Flow/Average Annual Flow")
 
     plt.grid(which = 'major', linestyle = '-', axis = 'y')
-    ax = plt.gca()
-    tick_spacing = [0, 50, 100, 150, 200, 250, 300, 350]
-    ax.set_xticks(tick_spacing)
-    #tick_labels = label_xaxis[tick_spacing]
-    #ax.set_xticklabels(tick_labels)
 
     plt.savefig("post_processedFiles/Hydrographs/dim_hydro_aggregate.png")
