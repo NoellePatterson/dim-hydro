@@ -92,7 +92,7 @@ def _plotter(aggregate_matrix, start_date):
     box = ax.get_position('aggregate_matrix')
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, ncol=5, borderaxespad = 3)
 
-    plt.title("DRH SM")
+    plt.title("Dimensionless Reference Hydrograph")
     plt.xlabel("Julian Date")
     plt.ylabel("Daily Flow/Average Annual Flow")
 
