@@ -74,7 +74,7 @@ def _plotter(flow_matrix, julian_dates, current_gauge_number, plot, current_gaug
         percentiles[row_index,3] = np.nanpercentile(normalized_matrix[row_index,:], 75)
         percentiles[row_index,4] = np.nanpercentile(normalized_matrix[row_index,:], 90)
 
-    # percentiles = percentiles.transpose()
+    """To save output as CSV, uncomment line below"""
     # np.savetxt("post_processedFiles/Class-{}/{}.csv".format(int(current_gauge_class), int(current_gauge_number)), percentiles, delimiter=",", fmt="%s")
 
     """Dimensionless Hydrograph Plotter"""

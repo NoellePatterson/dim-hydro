@@ -43,6 +43,8 @@ def dim_hydrograph_plotter_agg(start_date, directory_name, end_with, class_numbe
                     current_gauge_column_index = current_gauge_column_index + step
 
         final_aggregate = aggregate_matrix/counter
+
+        """To save output as CSV, uncomment line below"""
         # np.savetxt("post_processedFiles/Hydrographs/Class_{}.csv".format(int(class_number)), final_aggregate, delimiter=",", fmt="%s")
         _plotter(final_aggregate, start_date)
 
@@ -91,7 +93,7 @@ def _plotter(aggregate_matrix, start_date):
     box = ax.get_position('aggregate_matrix')
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, ncol=5, borderaxespad = 3)
 
-    plt.title("Dimensionless Hydrograph")
+    plt.title("DRH SM")
     plt.xlabel("Julian Date")
     plt.ylabel("Daily Flow/Average Annual Flow")
 
