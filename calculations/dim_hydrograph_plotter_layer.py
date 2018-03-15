@@ -78,9 +78,7 @@ def _plotter(flow_matrix, julian_dates, current_gauge_number, plot, start_date):
     ax.xaxis.set_major_formatter(plt.FuncFormatter(format_func))
     x = np.arange(0,366,1)
 
-    plt.plot(percentiles[:,0], color = 'blue')
-    plt.plot(percentiles[:,1], color = 'red')
-    plt.plot(percentiles[:,2], color = 'blue')
+    plt.plot(percentiles[:,1], color = 'navy')
 
     plt.fill_between(x, percentiles[:,0], percentiles[:,1], color = 'powderblue')
     plt.fill_between(x, percentiles[:,1], percentiles[:,2], color = 'powderblue')
