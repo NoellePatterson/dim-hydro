@@ -56,10 +56,6 @@ def _plotter(flow_matrix, julian_dates, current_gauge_number, plot, current_gaug
     def format_func(value, tick_number):
         julian_start_date = datetime.strptime("{}/2001".format(start_date), "%m/%d/%Y").timetuple().tm_yday
         return int(remove_offset_from_julian_date(value, julian_start_date))
-    fig = plt.figure('aggregate_matrix')
-    ax = plt.subplot(111)
-    ax.xaxis.set_major_formatter(plt.FuncFormatter(format_func))
-    x = np.arange(0,366,1)
 
     """Dimensionless Hydrograph Plotter"""
     average_annual_flow = calculate_average_each_column(flow_matrix)
@@ -79,11 +75,12 @@ def _plotter(flow_matrix, julian_dates, current_gauge_number, plot, current_gaug
         percentiles[row_index,4] = np.nanpercentile(normalized_matrix[row_index,:], 90)
 
     # percentiles = percentiles.transpose()
-    # np.savetxt("post_processedFiles/Class-{}/plot_data_{}.csv".format(int(current_gauge_class), int(current_gauge_number)), percentiles, delimiter=",", fmt="%s")
+    # np.savetxt("post_processedFiles/Class-{}/{}.csv".format(int(current_gauge_class), int(current_gauge_number)), percentiles, delimiter=",", fmt="%s")
 
     """Dimensionless Hydrograph Plotter"""
 
     fig = plt.figure('hydrograph')
+    plt.subplots_adjust(bottom = .2)
     ax = plt.subplot(111)
     ax.xaxis.set_major_formatter(plt.FuncFormatter(format_func))
     x = np.arange(0,366,1)
@@ -98,8 +95,8 @@ def _plotter(flow_matrix, julian_dates, current_gauge_number, plot, current_gaug
     ax.fill_between(x, percentiles[:,2], percentiles[:,3], color = 'powderblue')
     ax.fill_between(x, percentiles[:,3], percentiles[:,4], color = 'powderblue')
     box = ax.get_position('hydrograph')
-    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, ncol=5)
-    plt.tight_layout()
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, ncol=5, borderaxespad = 3)
+    #plt.tight_layout()
 
     plt.title("Dimensionless Hydrograph")
     plt.xlabel("Julian Date")

@@ -74,6 +74,7 @@ def _plotter(flow_matrix, julian_dates, current_gauge_number, plot, start_date):
 
     fig = plt.figure('aggregate_matrix')
     ax = plt.subplot(111)
+    #plt.subplots_adjust(bottom = .2)
     ax.xaxis.set_major_formatter(plt.FuncFormatter(format_func))
     x = np.arange(0,366,1)
 

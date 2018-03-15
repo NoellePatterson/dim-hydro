@@ -43,7 +43,7 @@ def dim_hydrograph_plotter_agg(start_date, directory_name, end_with, class_numbe
                     current_gauge_column_index = current_gauge_column_index + step
 
         final_aggregate = aggregate_matrix/counter
-        # np.savetxt("post_processedFiles/Hydrographs/Class_{}_aggregate.csv".format(int(class_number)), final_aggregate, delimiter=",", fmt="%s")
+        # np.savetxt("post_processedFiles/Hydrographs/Class_{}.csv".format(int(class_number)), final_aggregate, delimiter=",", fmt="%s")
         _plotter(final_aggregate, start_date)
 
 def _getAggMatrix(flow_matrix):
@@ -75,6 +75,7 @@ def _plotter(aggregate_matrix, start_date):
 
     fig = plt.figure('aggregate_matrix')
     ax = plt.subplot(111)
+    plt.subplots_adjust(bottom = .2)
     ax.xaxis.set_major_formatter(plt.FuncFormatter(format_func))
     x = np.arange(0,366,1)
     plt.grid(which = 'major', linestyle = '-', axis = 'y')
@@ -88,8 +89,7 @@ def _plotter(aggregate_matrix, start_date):
     ax.fill_between(x, aggregate_matrix[:,2], aggregate_matrix[:,3], color = 'powderblue')
     ax.fill_between(x, aggregate_matrix[:,3], aggregate_matrix[:,4], color = 'powderblue')
     box = ax.get_position('aggregate_matrix')
-    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, ncol=5)
-    plt.tight_layout()
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, ncol=5, borderaxespad = 3)
 
     plt.title("Dimensionless Hydrograph")
     plt.xlabel("Julian Date")
