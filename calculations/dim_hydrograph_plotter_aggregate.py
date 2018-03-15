@@ -9,7 +9,6 @@ from utils.helpers import is_multiple_date_data, find_index
 from utils.matrix_convert import convert_raw_data_to_matrix
 from utils.calc_all_year import calculate_average_each_column
 from pre_processFiles.gauge_reference import gauge_reference
-matplotlib.use('Agg')
 
 np.warnings.filterwarnings('ignore')
 
@@ -93,7 +92,7 @@ def _plotter(aggregate_matrix, start_date):
     box = ax.get_position('aggregate_matrix')
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, ncol=5, borderaxespad = 3)
 
-    plt.title("DRH SM")
+    plt.title("Dimensionless Reference Hydrograph")
     plt.xlabel("Julian Date")
     plt.ylabel("Daily Flow/Average Annual Flow")
 

@@ -9,8 +9,6 @@ from pre_processFiles.gauge_reference import gauge_reference
 from utils.helpers import is_multiple_date_data, find_index
 from utils.matrix_convert import convert_raw_data_to_matrix
 from utils.calc_all_year import calculate_average_each_column
-matplotlib.use('Agg')
-
 
 np.warnings.filterwarnings('ignore')
 
