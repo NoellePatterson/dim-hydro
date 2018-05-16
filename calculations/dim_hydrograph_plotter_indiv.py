@@ -9,8 +9,6 @@ from pre_processFiles.gauge_reference import gauge_reference
 from utils.helpers import is_multiple_date_data, find_index
 from utils.matrix_convert import convert_raw_data_to_matrix
 from utils.calc_all_year import calculate_average_each_column
-matplotlib.use('Agg')
-
 
 np.warnings.filterwarnings('ignore')
 
@@ -74,7 +72,7 @@ def _plotter(flow_matrix, julian_dates, current_gauge_number, plot, current_gaug
         percentiles[row_index,3] = np.nanpercentile(normalized_matrix[row_index,:], 75)
         percentiles[row_index,4] = np.nanpercentile(normalized_matrix[row_index,:], 90)
 
-    # percentiles = percentiles.transpose()
+    """To save output as CSV, uncomment line below"""
     # np.savetxt("post_processedFiles/Class-{}/{}.csv".format(int(current_gauge_class), int(current_gauge_number)), percentiles, delimiter=",", fmt="%s")
 
     """Dimensionless Hydrograph Plotter"""
