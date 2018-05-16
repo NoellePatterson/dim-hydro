@@ -14,7 +14,7 @@ matplotlib.use('Agg')
 np.warnings.filterwarnings('ignore')
 
 def dim_hydrograph_plotter_agg(start_date, directory_name, end_with, class_number, gauge_numbers, plot):
-    aggregate_matrix = np.zeros((366, 5))
+    aggregate_matrix = np.zeros((366, 7)) # change to 5 for matrix without min/max
     counter = 0
     for root,dirs,files in os.walk(directory_name):
         for file in files:
@@ -43,8 +43,8 @@ def dim_hydrograph_plotter_agg(start_date, directory_name, end_with, class_numbe
                     current_gauge_column_index = current_gauge_column_index + step
 
         final_aggregate = aggregate_matrix/counter
-        # np.savetxt("post_processedFiles/Hydrographs/Class_{}.csv".format(int(class_number)), final_aggregate, delimiter=",", fmt="%s")
-        _plotter(final_aggregate, start_date)
+        np.savetxt("post_processedFiles/Hydrographs/Class_{}.csv".format(int(class_number)), final_aggregate, delimiter=",", fmt="%s")
+        #_plotter(final_aggregate, start_date)
 
 def _getAggMatrix(flow_matrix):
 
@@ -53,7 +53,7 @@ def _getAggMatrix(flow_matrix):
     number_of_rows = len(flow_matrix)
     number_of_columns = len(flow_matrix[0,:])
     normalized_matrix = np.zeros((number_of_rows, number_of_columns))
-    percentiles = np.zeros((number_of_rows, 5))
+    percentiles = np.zeros((number_of_rows, 7))
 
     for row_index, row_data in enumerate(flow_matrix[:,0]):
         for column_index, column_data in enumerate(flow_matrix[row_index, :]):
@@ -64,6 +64,8 @@ def _getAggMatrix(flow_matrix):
         percentiles[row_index,2] = np.nanpercentile(normalized_matrix[row_index,:], 50)
         percentiles[row_index,3] = np.nanpercentile(normalized_matrix[row_index,:], 75)
         percentiles[row_index,4] = np.nanpercentile(normalized_matrix[row_index,:], 90)
+        percentiles[row_index,5] = np.nanmin(normalized_matrix[row_index,:])
+        percentiles[row_index,6] = np.nanmax(normalized_matrix[row_index,:])
 
     return percentiles
 
