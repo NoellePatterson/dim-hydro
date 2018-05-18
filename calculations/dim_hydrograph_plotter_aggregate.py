@@ -12,6 +12,8 @@ from pre_processFiles.gauge_reference import gauge_reference
 
 np.warnings.filterwarnings('ignore')
 
+"""Note: this script will not work for running all gages at once (use plotter_indiv function, #2)"""
+
 def dim_hydrograph_plotter_agg(start_date, directory_name, end_with, class_number, gauge_numbers, plot):
     aggregate_matrix = np.zeros((366, 7)) # change to 5 for matrix without min/max
     counter = 0
@@ -42,8 +44,14 @@ def dim_hydrograph_plotter_agg(start_date, directory_name, end_with, class_numbe
                     current_gauge_column_index = current_gauge_column_index + step
 
         final_aggregate = aggregate_matrix/counter
-        np.savetxt("post_processedFiles/Hydrographs/Class_{}.csv".format(int(class_number)), final_aggregate, delimiter=",", fmt="%s")
-        #_plotter(final_aggregate, start_date)
+
+        if class_number:
+            np.savetxt("post_processedFiles/Hydrographs/Class_{}_aggregate.csv".format(int(current_gauge_class)), final_aggregate, delimiter=",", fmt="%s")
+        else:
+            np.savetxt("post_processedFiles/Hydrographs/plot_data_{}.csv".format(int(current_gauge_number)), final_aggregate, delimiter=",", fmt="%s")
+
+        """To output plot, uncomment line below"""
+        _plotter(final_aggregate, start_date)
 
 def _getAggMatrix(flow_matrix):
 
@@ -63,8 +71,8 @@ def _getAggMatrix(flow_matrix):
         percentiles[row_index,2] = np.nanpercentile(normalized_matrix[row_index,:], 50)
         percentiles[row_index,3] = np.nanpercentile(normalized_matrix[row_index,:], 75)
         percentiles[row_index,4] = np.nanpercentile(normalized_matrix[row_index,:], 90)
-        percentiles[row_index,5] = np.nanmin(normalized_matrix[row_index,:])
-        percentiles[row_index,6] = np.nanmax(normalized_matrix[row_index,:])
+        percentiles[row_index,5] = np.nanmin(normalized_matrix[row_index,:]) # comment out to remove min line
+        percentiles[row_index,6] = np.nanmax(normalized_matrix[row_index,:]) # comment out to remove max line
 
     return percentiles
 
@@ -80,21 +88,21 @@ def _plotter(aggregate_matrix, start_date):
     #ax.xaxis.set_major_formatter(plt.FuncFormatter(format_func))
     x = np.arange(0,366,1)
     plt.grid(which = 'major', linestyle = '-', axis = 'y')
-    min_lin = ax.plot(aggregate_matrix[:,0], color = 'black', label = 'min', lw=1)
-    perc10 = ax.plot(aggregate_matrix[:,1], color = 'navy', label = "10%")
-    perc25 = ax.plot(aggregate_matrix[:,2], color = 'blue', label = "25%")
-    perc50 = ax.plot(aggregate_matrix[:,3], color = 'red', label = "50%")
-    perc75 = ax.plot(aggregate_matrix[:,4], color = 'blue', label = "75%")
-    perc90 = ax.plot(aggregate_matrix[:,5], color = 'navy', label = "90%")
+    perc10 = ax.plot(aggregate_matrix[:,0], color = 'navy', label = "10%")
+    perc25 = ax.plot(aggregate_matrix[:,1], color = 'blue', label = "25%")
+    perc50 = ax.plot(aggregate_matrix[:,2], color = 'red', label = "50%")
+    perc75 = ax.plot(aggregate_matrix[:,3], color = 'blue', label = "75%")
+    perc90 = ax.plot(aggregate_matrix[:,4], color = 'navy', label = "90%")
+    min_lin = ax.plot(aggregate_matrix[:,5], color = 'black', label = 'min', lw=1)
     max_lin = ax.plot(aggregate_matrix[:,6], color = 'black', label = 'max', lw=1)
+    ax.fill_between(x, aggregate_matrix[:,0], aggregate_matrix[:,1], color = 'powderblue')
     ax.fill_between(x, aggregate_matrix[:,1], aggregate_matrix[:,2], color = 'powderblue')
     ax.fill_between(x, aggregate_matrix[:,2], aggregate_matrix[:,3], color = 'powderblue')
     ax.fill_between(x, aggregate_matrix[:,3], aggregate_matrix[:,4], color = 'powderblue')
-    ax.fill_between(x, aggregate_matrix[:,4], aggregate_matrix[:,5], color = 'powderblue')
     box = ax.get_position('aggregate_matrix')
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, ncol=7, borderaxespad = .9, fontsize='small', labelspacing=.2, columnspacing=1, markerscale=.5)
 
-    plt.title("High Elevation Low Precipitation")
+    #plt.title("High Elevation Low Precipitation")
     #plt.xlabel("Julian Date")
     plt.ylabel("Daily Flow/Average Annual Flow")
 

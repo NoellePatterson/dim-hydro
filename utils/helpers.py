@@ -282,7 +282,11 @@ def get_calculation_numbers():
     if not start_date:
         start_date = '10/1'
 
-    gauge_or_class = int(input('Input 1 to calculate entire Class, 2 for Gauge(s), or 3 for all Gauges => '))
+    if calculation_number == 1:
+        gauge_or_class = int(input('Input 1 to calculate entire Class or 2 for Gauge(s) => '))
+    else:
+        gauge_or_class = int(input('Input 1 to calculate entire Class, 2 for Gauge(s), or 3 for all Gauges => '))
+
     if gauge_or_class == 1:
         gauge_numbers = None
         class_number = input('Class Number? Default: 3 => ')

@@ -60,7 +60,7 @@ def _plotter(flow_matrix, julian_dates, current_gauge_number, plot, current_gaug
     number_of_rows = len(flow_matrix)
     number_of_columns = len(flow_matrix[0,:])
     normalized_matrix = np.zeros((number_of_rows, number_of_columns))
-    percentiles = np.zeros((number_of_rows, 5))
+    percentiles = np.zeros((number_of_rows, 7))
 
     for row_index, row_data in enumerate(flow_matrix[:,0]):
         for column_index, column_data in enumerate(flow_matrix[row_index, :]):
@@ -71,36 +71,45 @@ def _plotter(flow_matrix, julian_dates, current_gauge_number, plot, current_gaug
         percentiles[row_index,2] = np.nanpercentile(normalized_matrix[row_index,:], 50)
         percentiles[row_index,3] = np.nanpercentile(normalized_matrix[row_index,:], 75)
         percentiles[row_index,4] = np.nanpercentile(normalized_matrix[row_index,:], 90)
+        percentiles[row_index,5] = np.nanmin(normalized_matrix[row_index,:])
+        percentiles[row_index,6] = np.nanmax(normalized_matrix[row_index,:])
 
     """To save output as CSV, uncomment line below"""
-    # np.savetxt("post_processedFiles/Class-{}/{}.csv".format(int(current_gauge_class), int(current_gauge_number)), percentiles, delimiter=",", fmt="%s")
+    np.savetxt("post_processedFiles/csv_output/plot_data_{}.csv".format(int(current_gauge_number)), percentiles, delimiter=",", fmt="%s")
 
     """Dimensionless Hydrograph Plotter"""
-
     fig = plt.figure('hydrograph')
-    plt.subplots_adjust(bottom = .2)
     ax = plt.subplot(111)
-    ax.xaxis.set_major_formatter(plt.FuncFormatter(format_func))
+    plt.subplots_adjust(bottom = .15)
+    # ax.xaxis.set_major_formatter(plt.FuncFormatter(format_func))
     x = np.arange(0,366,1)
     plt.grid(which = 'major', linestyle = '-', axis = 'y')
+    #plt.title("High Elevation Low Precipitation")
     perc10 = ax.plot(percentiles[:,0], color = 'navy', label = "10%")
     perc25 = ax.plot(percentiles[:,1], color = 'blue', label = "25%")
     perc50 = ax.plot(percentiles[:,2], color = 'red', label = "50%")
     perc75 = ax.plot(percentiles[:,3], color = 'blue', label = "75%")
     perc90 = ax.plot(percentiles[:,4], color = 'navy', label = "90%")
+    min_lin = ax.plot(percentiles[:,5], color = 'black', label = 'min', lw=1) # comment out to plot without min/max lines
+    max_lin = ax.plot(percentiles[:,6], color = 'black', label = 'max', lw=1) # comment out to plot without min/max lines
     ax.fill_between(x, percentiles[:,0], percentiles[:,1], color = 'powderblue')
     ax.fill_between(x, percentiles[:,1], percentiles[:,2], color = 'powderblue')
     ax.fill_between(x, percentiles[:,2], percentiles[:,3], color = 'powderblue')
     ax.fill_between(x, percentiles[:,3], percentiles[:,4], color = 'powderblue')
     box = ax.get_position('hydrograph')
-    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, ncol=5, borderaxespad = 3)
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, ncol=7, borderaxespad = .9, fontsize='small', labelspacing=.2, columnspacing=1, markerscale=.5)
     #plt.tight_layout()
 
     plt.title("Dimensionless Hydrograph")
-    plt.xlabel("Julian Date")
     plt.ylabel("Daily Flow/Average Annual Flow")
+
+    ax = plt.gca()
+    tick_spacing = [0, 30.5, 61, 91.5, 122, 152.5, 183, 213.5, 244, 274.5, 305, 335.5]
+    tick_labels = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
+    plt.xticks(tick_spacing, tick_labels)
 
     plt.grid(which = 'major', linestyle = '-', axis = 'y')
 
     if plot:
         plt.savefig("post_processedFiles/Hydrographs/{}.png".format(int(current_gauge_number)))
+    ax.clear()
