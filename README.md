@@ -12,8 +12,8 @@ This project uses [Python3](https://www.python.org/)
 2. Clone your project in [Terminal](http://www.informit.com/blogs/blog.aspx?uk=The-10-Most-Important-Linux-Commands)
 
    ```
-   git clone https://github.com/leogoesger/func-flow.git
-   cd func-flow/
+   git clone https://github.com/NoellePatterson/dim-hydro.git
+   cd dim-hydro-master/
    ```
 
 3. Create and activate virtualenv
@@ -61,8 +61,8 @@ This project uses [Python3](https://www.python.org/)
 3. Clone your project in [Command Prompt](http://www.informit.com/blogs/blog.aspx?uk=The-10-Most-Important-Linux-Commands)
 
    ```
-   git clone https://github.com/leogoesger/func-flow.git
-   cd func-flow
+   git clone https://github.com/NoellePatterson/dim-hydro.git
+   cd dim-hydro-master/
    ```
 
 4. Create and activate virtualenv
