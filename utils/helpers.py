@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from pre_processFiles.gauge_reference import gauge_reference
 
 def create_folders():
-    folders = ['post_processedFiles/Boxplots', 'post_processedFiles/Class-1', 'post_processedFiles/Class-2', 'post_processedFiles/Class-3', 'post_processedFiles/Class-4', 'post_processedFiles/Class-5', 'post_processedFiles/Class-6', 'post_processedFiles/Class-7', 'post_processedFiles/Class-8', 'post_processedFiles/Class-9', 'post_processedFiles/Hydrographs']
+    folders = ['post_processedFiles/csv_output', 'post_processedFiles/Boxplots', 'post_processedFiles/Class-1', 'post_processedFiles/Class-2', 'post_processedFiles/Class-3', 'post_processedFiles/Class-4', 'post_processedFiles/Class-5', 'post_processedFiles/Class-6', 'post_processedFiles/Class-7', 'post_processedFiles/Class-8', 'post_processedFiles/Class-9', 'post_processedFiles/Hydrographs']
 
     for folder in folders:
         try:
